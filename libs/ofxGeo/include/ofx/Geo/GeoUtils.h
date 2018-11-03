@@ -39,7 +39,7 @@ public:
     /// \param coordinate0 The first location.
     /// \param coordinate1 The second location.
     /// \returns the spherical distance in kilometers.
-	static double distanceSpherical(const Coordinate& coordinate0,
+    static double distanceSpherical(const Coordinate& coordinate0,
                                     const Coordinate& coordinate1);
 
     /// \brief Get the distance in kilometers between two GeoLocations on earth.
@@ -130,6 +130,23 @@ public:
 
     /// \brief The maximum value for a longitude, + 180 degrees.
     static const double MAX_LONGITUDE_DEGREES;
+
+    /// \brief Combine multiple hashes.
+    ///
+    /// The order of combining hases will affect the final hash value. This uses
+    /// std::hash to hash the value, so it is good for being a unique key for
+    /// hash tables, but it is not meant for cryptographic hashing.
+    ///
+    /// \param seed The existing hash to amend.
+    /// \param v The value to hash and amend.
+    /// \tparam T The type of the value to hash and amend.
+    /// \sa http://stackoverflow.com/a/2595226/1518329
+    template <class T>
+    static void hash(std::size_t& seed, const T& v)
+    {
+        std::hash<T> hasher;
+        seed ^= hasher(v) + 0x9e3779b9 + (seed << 6) + (seed >> 2);
+    }
 
 private:
     GeoUtils() = delete;
